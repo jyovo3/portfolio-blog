@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Color tokens */
+  --color-base: #faf8f5;
+  --color-base-soft: #f3f0ea;
+  --color-surface: #ffffff;
+  --color-ink: #1c1b19;
+  --color-ink-soft: #4a4844;
+  --color-ink-muted: #78756e;
+  --color-accent: #c1502e;
+  --color-accent-soft: #d4734e;
+  --color-accent-subtle: #f5e6dc;
+  --color-line: #e6e1d8;
+  --color-line-soft: #f0ece5;
+
+  /* Dark mode */
+  --color-base-dark: #14130f;
+  --color-base-soft-dark: #1c1a16;
+  --color-surface-dark: #211f1b;
+  --color-ink-dark: #e8e4db;
+  --color-ink-soft-dark: #b8b3a7;
+  --color-ink-muted-dark: #858075;
+  --color-accent-dark: #e08a65;
+  --color-accent-subtle-dark: #3a2418;
+  --color-line-dark: #2c2925;
+  --color-line-soft-dark: #1f1d19;
+
+  /* Typography */
+  --font-serif: "Newsreader", "Noto Serif SC", "Source Han Serif SC",
+    "Songti SC", Georgia, serif;
+  --font-sans: "Inter", "Noto Sans SC", "Source Han Sans SC",
+    "PingFang SC", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Shape & depth */
+  --radius-card: 12px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(28, 27, 25, 0.04),
+    0 4px 16px rgba(28, 27, 25, 0.06);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-base);
+    color: var(--color-ink);
+    letter-spacing: 0.01em;
+  }
+
+  /* Dark mode via Tailwind's `dark:` variant toggled on <html> */
+  .dark body {
+    background: var(--color-base-dark);
+    color: var(--color-ink-dark);
+  }
+
+  ::selection {
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
+  }
+  .dark ::selection {
+    background: var(--color-accent-subtle-dark);
+    color: var(--color-accent-dark);
+  }
+
+  /* Minimal prose-friendly defaults for article typography */
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
 }

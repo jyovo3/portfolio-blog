@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getAllPosts, getAllPostSlugs, getPostBySlug } from "@/lib/posts";
 import { formatDate } from "@/lib/formatDate";
 import { MdxRenderer } from "@/components/MdxRenderer";
+import { GiscusComments } from "@/components/GiscusComments";
 
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
@@ -61,6 +62,8 @@ export default async function PostPage({
       <div className="mt-10">
         <MdxRenderer source={source} />
       </div>
+
+      <GiscusComments />
     </article>
   );
 }

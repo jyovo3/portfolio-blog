@@ -1,10 +1,23 @@
 import Link from "next/link";
-import { MOCK_POSTS } from "@/lib/mock-posts";
-import { formatDate } from "@/lib/formatDate";
 import { notFound } from "next/navigation";
+import { getAllPosts, getAllPostSlugs, getPostBySlug } from "@/lib/posts";
+import { formatDate } from "@/lib/formatDate";
+import { MdxRenderer } from "@/components/MdxRenderer";
 
-export function generateStaticParams() {
-  return MOCK_POSTS.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const slugs = await getAllPostSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const result = await getPostBySlug(slug);
+  if (!result) return {};
+  return { title: result.meta.title, description: result.meta.summary };
 }
 
 export default async function PostPage({
@@ -13,8 +26,9 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = MOCK_POSTS.find((p) => p.slug === slug);
-  if (!post) notFound();
+  const result = await getPostBySlug(slug);
+  if (!result) notFound();
+  const { meta, source } = result;
 
   return (
     <article className="max-w-none">
@@ -27,13 +41,13 @@ export default async function PostPage({
 
       <header className="mt-6 space-y-3">
         <h1 className="font-serif text-3xl font-semibold leading-tight text-ink sm:text-4xl dark:text-ink-dark">
-          {post.title}
+          {meta.title}
         </h1>
         <div className="flex flex-wrap items-center gap-2 text-sm text-ink-muted dark:text-ink-muted-dark">
-          <time dateTime={post.date}>{formatDate(post.date)}</time>
+          <time dateTime={meta.date}>{formatDate(meta.date)}</time>
           <span aria-hidden>·</span>
-          <span>{post.readingTime}</span>
-          {post.tags.map((t) => (
+          <span>{meta.minutes} 分钟阅读</span>
+          {meta.tags.map((t) => (
             <span
               key={t}
               className="rounded-[var(--radius-pill)] bg-base-soft px-2.5 py-0.5 text-xs dark:bg-base-soft-dark"
@@ -44,13 +58,9 @@ export default async function PostPage({
         </div>
       </header>
 
-      <p className="mt-10 text-lg leading-8 text-ink-soft dark:text-ink-soft-dark">
-        {/* 占位正文 —— 接入 MDX 时由真实内容取代 */}
-        {post.summary}
-      </p>
-      <p className="mt-4 text-lg leading-8 text-ink-soft dark:text-ink-soft-dark">
-        （这里是占位内容。将来在你把 MDX 接入之后，每篇文章都会在这里展示完整的正文。）
-      </p>
+      <div className="mt-10">
+        <MdxRenderer source={source} />
+      </div>
     </article>
   );
 }

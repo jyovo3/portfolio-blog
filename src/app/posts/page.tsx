@@ -1,12 +1,14 @@
 import { PostCard } from "@/components/PostCard";
-import { MOCK_POSTS } from "@/lib/mock-posts";
+import { getAllPosts } from "@/lib/posts";
 
 export const metadata = {
   title: "文章",
   description: "一苇写的所有文章",
 };
 
-export default function PostsPage() {
+export default async function PostsPage() {
+  const posts = await getAllPosts();
+
   return (
     <div className="space-y-8">
       <header>
@@ -14,12 +16,12 @@ export default function PostsPage() {
           所有文章
         </h1>
         <p className="mt-2 text-ink-muted dark:text-ink-muted-dark">
-          共 {MOCK_POSTS.length} 篇 · 想到哪写到哪
+          共 {posts.length} 篇 · 想到哪写到哪
         </p>
       </header>
 
       <div className="space-y-4">
-        {MOCK_POSTS.map((post) => (
+        {posts.map((post) => (
           <PostCard key={post.slug} post={post} />
         ))}
       </div>

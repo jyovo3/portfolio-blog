@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { PostCard } from "@/components/PostCard";
-import { MOCK_POSTS } from "@/lib/mock-posts";
+import { getAllPosts } from "@/lib/posts";
 
-export default function HomePage() {
-  const recentPosts = MOCK_POSTS.slice(0, 3);
+export default async function HomePage() {
+  const recentPosts = (await getAllPosts()).slice(0, 3);
 
   return (
     <div className="space-y-16">
@@ -13,8 +13,7 @@ export default function HomePage() {
           Hello, world
         </p>
         <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl dark:text-ink-dark">
-          我是<span className="text-accent dark:text-accent-dark">一苇</span>
-          。
+          我是<span className="text-accent dark:text-accent-dark">一苇</span>。
           <br />
           走走停停，写点东西。
         </h1>
@@ -22,7 +21,9 @@ export default function HomePage() {
           这是一个安放文字的地方 —— 有关{" "}
           <span className="text-ink dark:text-ink-dark">前端工程</span>、
           <span className="text-ink dark:text-ink-dark"> 阅读</span>，以及
-          <span className="text-ink dark:text-ink-dark"> 一个普通人认真生活的痕迹</span>
+          <span className="text-ink dark:text-ink-dark">
+            {" "}
+            一个普通人认真生活的痕迹</span>
           。欢迎你来坐坐。
         </p>
 
@@ -59,11 +60,17 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="space-y-4">
-          {recentPosts.map((post) => (
-            <PostCard key={post.slug} post={post} />
-          ))}
-        </div>
+        {recentPosts.length === 0 ? (
+          <p className="text-ink-muted dark:text-ink-muted-dark">
+            还没文章，先去写一篇吧～
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {recentPosts.map((post) => (
+              <PostCard key={post.slug} post={post} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

@@ -1,0 +1,64 @@
+---
+title: 零基础学 Next.js：我踩过的那些坑
+date: 2026-07-12
+tags: [Next.js, 前端, 学习]
+summary: 从用 create-next-app 开始，到第一次成功部署到阿里云，这篇文章完整记录了整个过程中我碰到的每一个错误和每一个让人豁然开朗的瞬间。
+---
+
+## 起手式：一个命令，什么都不懂
+
+```bash
+npx create-next-app@latest my-blog --ts --tailwind --eslint --app
+```
+
+说实话，当时根本不知道这一串 flag 啥意思。但下一步下一步，跑通了 —— 命令行出现 `Local: http://localhost:3000` 的时候，第一次觉得「
+我把一个网站跑起来了！」
+
+## 第一个坑：npm 装不动
+
+在国内直接用 npm 装依赖，有时候会卡住。解决办法是用淘宝源：
+
+```bash
+npm config set registry https://registry.npmmirror.com
+npm install
+```
+
+三秒钟就装好了，非常爽。
+
+## App Router 还是 Pages Router
+
+Next.js 有两套路由体系。看了一圈资料，决定用新的 **App Router**（对应 `app/` 目录），原因是：
+
+- 文档主推
+- 未来会逐渐替代旧的 Pages Router
+- 有一些很酷的新特性，比如 React Server Components
+
+## 关于 `[slug]` 这样的动态路由
+
+```typescript
+// app/posts/[slug]/page.tsx
+export default async function PostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  // ...
+}
+```
+
+注意 `params` 在 Next.js 15 变成了 **Promise**，要 await。这是新手最容易踩的一个坑，因为大部分老教程还没更新。
+
+```typescript
+// ❌ 老写法
+const { slug } = params;
+
+// ✅ 新写法（Next.js 15+）
+const { slug } = await params;
+```
+
+## 下一步
+
+下一步我想把阿里云的部署流程也写一篇出来。命令行 `ssh` 那些东西，又是一道坎，但攻过去就通。
+
+学习嘛，就是一个坑一个坑踩过来的。🚀
